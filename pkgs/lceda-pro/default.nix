@@ -56,6 +56,11 @@ in stdenv.mkDerivation {
         homepage = "https://lceda.cn/";
         description = "Highly efficient domestic PCB design tools, permanently free";
         license = licenses.unfree;
+        sourceProvenance = with lib.sourceTypes; [
+            binaryNativeCode
+            binaryBytecode
+            binaryData
+        ];
         maintainers = [ maintainers.srcres258 ];
         platforms = platforms.linux;
     };
