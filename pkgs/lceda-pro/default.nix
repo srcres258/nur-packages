@@ -6,10 +6,24 @@
     makeWrapper,
     xdg-utils,
     electron,
+    makeDesktopItem,
+    copyDesktopItems,
     ...
 }: let
     programName = "lceda-pro";
+    programNameDesc = "LCEDA Pro";
     programVersion = "2.2.44.12";
+
+    desktopEntry = makeDesktopItem {
+        name = programName;
+        desktopName = programNameDesc;
+        exec = "lceda-pro %u";
+        icon = "lceda";
+        categories = [ "Development" ];
+        extraConfig = {
+            "Name[zh_CN]" = "嘉立创EDA专业版";
+        };
+    };
 in stdenv.mkDerivation {
     pname = programName;
     version = programVersion;
@@ -22,7 +36,7 @@ in stdenv.mkDerivation {
     dontConfigure = true;
     dontBuild = true;
 
-    nativeBuildInputs = [ makeWrapper ];
+    nativeBuildInputs = [ makeWrapper copyDesktopItems ];
 
     installPhase = ''
         runHook preInstall
@@ -51,6 +65,8 @@ in stdenv.mkDerivation {
             --set-rpath "$out/${programName}" \
             $out/${programName}/${programName}
     '';
+
+    desktopItems = [ desktopEntry ];
 
     meta = with lib; {
         homepage = "https://lceda.cn/";
