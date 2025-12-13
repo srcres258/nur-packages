@@ -63,6 +63,7 @@ in stdenv.mkDerivation {
         ];
         maintainers = [ maintainers.srcres258 ];
         platforms = platforms.linux;
+        mainProgram = programName;
     };
 }
 
