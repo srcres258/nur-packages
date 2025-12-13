@@ -1,12 +1,12 @@
 {
+    maintainers,
     stdenv,
     fetchzip,
     lib,
-    makeDesktopItem,
     makeWrapper,
-    copyDesktopItems,
     xdg-utils,
     electron,
+    ...
 }: let
     programName = "lceda-pro";
     programVersion = "2.2.44.12";
@@ -15,7 +15,7 @@ in stdenv.mkDerivation {
     version = programVersion;
     src = fetchzip {
         url = "https://image.lceda.cn/files/lceda-pro-linux-x64-${programVersion}.zip";
-        hash = ""; # TODO
+        hash = "sha256-SM+aviLeYKTjZpQO2f1z3ManYjF+WOYWKvIYv7+neu4=";
         stripRoot = false;
     };
 
@@ -56,6 +56,7 @@ in stdenv.mkDerivation {
         homepage = "https://lceda.cn/";
         description = "Highly efficient domestic PCB design tools, permanently free";
         license = licenses.unfree;
+        maintainers = [ maintainers.srcres258 ];
         platforms = platforms.linux;
     };
 }
