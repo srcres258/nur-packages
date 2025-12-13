@@ -1,7 +1,5 @@
-let
-    username = "srcres258";
-in {
-  description = "${username}'s personal NUR repository";
+{
+  description = "My personal NUR repository";
   inputs.nixpkgs.url = "github:NixOS/nixpkgs/nixpkgs-unstable";
   outputs = { self, nixpkgs }:
     let
@@ -14,7 +12,7 @@ in {
       packages = forAllSystems (system: nixpkgs.lib.filterAttrs (_: v: nixpkgs.lib.isDerivation v) self.legacyPackages.${system});
 
       overlays.default = final: prev: {
-          nur.repos.${username} = self.packages.x86_64-linux;
+          nur.repos.srcres258 = self.packages.x86_64-linux;
       };
     };
 }
