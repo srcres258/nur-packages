@@ -20,6 +20,9 @@ in {
   lceda-pro = pkgs.callPackage ./pkgs/lceda-pro {
       maintainers = maintainers;
   };
+  jlc-assistant = pkgs.callPackage ./pkgs/jlc-assistant {
+      maintainers = maintainers;
+  };
   # some-qt5-package = pkgs.libsForQt5.callPackage ./pkgs/some-qt5-package { };
   # ...
 }
