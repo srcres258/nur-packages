@@ -39,7 +39,7 @@
         src = let
             filename = "Xilinx_Unified_2022.2_1014_8888.tar.gz";
             url = "https://www.xilinx.com/member/forms/download/xef.html?filename=Xilinx_Unified_2022.2_1014_8888.tar.gz";
-            path = "/opt/${filename}"
+            path = "/opt/${filename}";
         in requireFile {
             name = filename;
             url = "file://${path}";
