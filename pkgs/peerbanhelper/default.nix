@@ -3,7 +3,7 @@
     fetchurl,
     stdenvNoCC,
     lib,
-    jdk25_headless,
+    jdk22_headless,
     makeWrapper,
     unzip
 }: let
@@ -28,7 +28,7 @@ in stdenvNoCC.mkDerivation (finalAttrs: {
         cp PeerBanHelper.jar $out/opt/peerbanhelper.jar
         cp -r libraries $out/opt/libraries
 
-        makeWrapper ${jdk25_headless}/bin/java $out/bin/peerbanhelper \
+        makeWrapper ${jdk22_headless}/bin/java $out/bin/peerbanhelper \
             --add-flags "-jar" \
             --add-flags "$out/opt/peerbanhelper.jar"
 
