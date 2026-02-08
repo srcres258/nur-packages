@@ -13,8 +13,8 @@ in pythonEnv.buildPythonApplication {
 
   src = pkgs.fetchFromGitHub {
     owner = "srcres258";
-    repo = "ag";
-    rev = "v0.1.2";
+    repo = pname;
+    rev = "v${version}";
     sha256 = "sha256-rKsddgwhzZEQeXgWfJ2oOvSMYdlol+Vm4UKMG+Ieb+s=";
   };
 
@@ -33,7 +33,7 @@ in pythonEnv.buildPythonApplication {
 
   meta = with pkgs.lib; {
     description = "A command-line AI assistant";
-    homepage = "https://github.com/srcres258/ag";
+    homepage = "https://github.com/srcres258/${pname}";
     license = licenses.mit;
     maintainers = with maintainers; [ srcres258 ];
     platforms = platforms.linux;
