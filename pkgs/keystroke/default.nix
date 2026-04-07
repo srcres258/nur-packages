@@ -24,7 +24,7 @@
 in pkgs.rustPlatform.buildRustPackage {
   inherit pname version src;
 
-  cargoLock.lockFile = "${src}/Cargo.lock";
+  cargoHash = "sha256-q2P83RG+tHkego2gRIZhT4aGqAWNivxLnCrasxGfhOM=";
 
   nativeBuildInputs = with pkgs; [
     pkg-config
@@ -33,15 +33,6 @@ in pkgs.rustPlatform.buildRustPackage {
 
   buildInputs = runtimeDeps;
   doCheck = false;
-
-  postPatch = ''
-    substituteInPlace Cargo.lock --replace-fail "version = 4" "version = 3"
-    substituteInPlace /build/cargo-vendor-dir/Cargo.lock --replace-fail "version = 4" "version = 3"
-
-    for manifest in /build/cargo-vendor-dir/*/Cargo.toml; do
-      substituteInPlace "$manifest" --replace-quiet 'edition = "2024"' 'edition = "2021"'
-    done
-  '';
 
   preFixup = ''
     gappsWrapperArgs+=(
