@@ -59,7 +59,7 @@ nix build .#<package-attr>
 ```
 Example: `nix build .#ag`
 
-## “Single Test” Guidance
+## "Single Test" Guidance
 There is no standalone unit-test runner in this repo.
 Use a **single package build** as the narrowest test-equivalent:
 ```bash
@@ -67,7 +67,14 @@ nix-build -A <package-attr>
 ```
 Notes:
 - `pkgs/ag/default.nix` and `pkgs/jyyslide-util/default.nix` set `doCheck = true`.
-- For those packages, checks execute during build.
+- `pkgs/keystroke/default.nix` sets `doCheck = false` (tests deliberately disabled).
+- For packages with `doCheck = true`, checks execute during build.
+
+## CI Behavior
+- Runs on PR, push to main/master, cron (daily at 08:00 UTC), and manual trigger.
+- Matrix tests against **3 nixpkgs channels**: `nixpkgs-unstable`, `nixos-unstable`, `nixos-25.05`.
+- Steps: evaluate → build cacheable outputs → trigger NUR update webhook.
+- Uses **Cachix** for binary caching: cache name `nur-packages-srcres258`.
 
 ## Lint/Format Status
 No dedicated repo-level lint/format command is defined.
@@ -99,11 +106,12 @@ Pattern:
 - Root attrs are kebab-case or version-suffixed:
   - `example-package`, `simple-toml-configurator`, `vivado-2022_2`
 - Inside derivations, prefer `pname` + `version`.
-- Use clear `let` variable names (`pythonEnv`, `programName`, `desktopEntry`).
+- Use clear `let` variable names (`pythonEnv`, `programName`, `desktopEntry`, `runtimeDeps`).
 
 ### Arguments and imports
 - Use attrset function headers with explicit dependencies and optional `...`.
 - Prefer `inherit` for in-scope values.
+- For Python packages, extract `pythonEnv = pkgs.python312Packages` in the `let` block.
 Examples:
 ```nix
 { maintainers, pkgs, ... }:
@@ -116,17 +124,32 @@ inherit pname version;
 - Keep `let ... in` blocks concise.
 - Keep long shell logic in multiline strings (`'' ... ''`).
 
+### Fetch patterns
+- Most packages use `pkgs.fetchFromGitHub` (mostly from owner `srcres258`).
+- Some files use `hash` (newer nixpkgs convention), some use `sha256`. Follow whichever the file already uses.
+- Binary packages use `fetchzip` or `fetchurl`.
+
+### Python package patterns
+Three approaches observed in the repo:
+1. **`buildPythonApplication`** – for CLI apps (`ag`, `jyyslide-util`, `adif-manage`). Uses `format = "pyproject"` and `propagatedBuildInputs`.
+2. **`buildPythonPackage`** – for libraries (`simple-toml-configurator`). Uses `pyproject = true`, `build-system`, and `dependencies` (newer nixpkgs python infrastructure).
+3. No Python packages use `buildPythonPackage` with `buildPythonPackage rec { ... }` — prefer the patterns above.
+
 ### Metadata expectations
 Include a meaningful `meta` block when possible:
 - `description`, `homepage`, `license`, `maintainers`
 - `platforms` and `mainProgram` where applicable
-- `broken = true` for known-broken packages
-- `sourceProvenance` for binary/distributed artifacts
+- `broken = true` for known-broken packages (example: `jlc-assistant`)
+- `sourceProvenance` for binary/distributed artifacts (example: `lceda-pro`, `vivado-2022_2` use `binaryNativeCode`, `binaryBytecode`, `binaryData`)
 
 ### Error handling and safety
 - Prefer explicit metadata gating (`broken`, license correctness, `preferLocalBuild`) to avoid CI/cache surprises.
 - In shell phases/scripts, document non-obvious workarounds briefly.
 - Use `runHook preInstall` / `runHook postInstall` in custom install phases.
+- The `peerbanhelper` package uses `mkDerivation (finalAttrs: { ... })` instead of `rec` — a newer nixpkgs pattern that avoids the `rec` pitfall.
+
+### Derivation quirk
+- `pkgs/vivado-2022_2/default.nix` wraps its derivation in `buildFHSEnv` for FHS compatibility — this is uncommon and worth noting if touching that package.
 
 ## Critical Files to Inspect Before Editing
 - Package exports: `default.nix`
@@ -142,6 +165,6 @@ Include a meaningful `meta` block when possible:
 - Do not introduce broad refactors during package updates.
 - If adding a new package:
   1. Create `pkgs/<name>/default.nix`
-  2. Export it in root `default.nix`
-  3. Add accurate `meta`
+  2. Export it in root `default.nix` with `pkgs.callPackage ./pkgs/<name> { inherit maintainers; }`
+  3. Add accurate `meta` (at minimum: `description`, `homepage`, `license`, `maintainers`, `mainProgram`)
   4. Build with `nix-build -A <name>`
