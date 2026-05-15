@@ -24,5 +24,6 @@ in pkgs.rustPlatform.buildRustPackage {
     maintainers = with maintainers; [ srcres258 ];
     mainProgram = "waveql";
     platforms = platforms.linux ++ platforms.darwin;
+    broken = versionOlder pkgs.rustc.version "1.90.0";
   };
 }
