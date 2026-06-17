@@ -7,6 +7,7 @@
 , wayland-protocols
 , wayland-scanner
 , libxkbcommon
+, maintainers
 , ...
 }:
 
