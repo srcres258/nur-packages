@@ -1,4 +1,4 @@
-{ lib
+{ pkgs
 , stdenv
 , fetchFromGitHub
 , zig_0_16
@@ -51,7 +51,7 @@ stdenv.mkDerivation (finalAttrs: {
 
   dontUseZigCheck = true;
 
-  meta = with lib; {
+  meta = with pkgs.lib; {
     description = "kewuaa's Window Manager for river";
     homepage = "https://github.com/kewuaa/kwm";
     license = licenses.gpl3Only;
