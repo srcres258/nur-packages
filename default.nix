@@ -27,9 +27,6 @@ in {
   vivado-2022_2 = pkgs.callPackage ./pkgs/vivado-2022_2 {
       inherit maintainers;
   };
-  ag = pkgs.callPackage ./pkgs/ag {
-      inherit maintainers;
-  };
   # peerbanhelper = pkgs.callPackage ./pkgs/peerbanhelper {
   #     inherit maintainers;
   # };
