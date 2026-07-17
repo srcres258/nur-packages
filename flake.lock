@@ -1,41 +1,6 @@
 {
   "nodes": {
-    "kwm": {
-      "inputs": {
-        "nixpkgs": "nixpkgs"
-      },
-      "locked": {
-        "lastModified": 1784272034,
-        "narHash": "sha256-VgrWcdh7LEJUlQH/y6coomvXdxxvOasqH5BC+xJWRWA=",
-        "owner": "srcres258",
-        "repo": "kwm",
-        "rev": "e7f111c72553ba3b2ecb75d1f3f1d7aaa293ff16",
-        "type": "github"
-      },
-      "original": {
-        "owner": "srcres258",
-        "ref": "v0.3.0.2",
-        "repo": "kwm",
-        "type": "github"
-      }
-    },
     "nixpkgs": {
-      "locked": {
-        "lastModified": 1784176690,
-        "narHash": "sha256-RUXu+GHGkY+eShsqx8hp0BIIo51K3V1Q8AY4pPAUcDw=",
-        "owner": "NixOS",
-        "repo": "nixpkgs",
-        "rev": "6368bc923cec55a5f78960ade0cb4dd99580e087",
-        "type": "github"
-      },
-      "original": {
-        "owner": "NixOS",
-        "ref": "nixpkgs-unstable",
-        "repo": "nixpkgs",
-        "type": "github"
-      }
-    },
-    "nixpkgs_2": {
       "locked": {
         "lastModified": 1777270315,
         "narHash": "sha256-yKB4G6cKsQsWN7M6rZGk6gkJPDNPIzT05y4qzRyCDlI=",
@@ -53,8 +18,7 @@
     },
     "root": {
       "inputs": {
-        "kwm": "kwm",
-        "nixpkgs": "nixpkgs_2"
+        "nixpkgs": "nixpkgs"
       }
     }
   },

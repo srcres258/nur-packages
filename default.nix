@@ -6,9 +6,7 @@
 # commands such as:
 #     nix-build -A mypackage
 
-{ pkgs ? import <nixpkgs> { }
-, kwm ? null
-}:
+{ pkgs ? import <nixpkgs> { } }:
 
 let
     maintainers = import ./maintainers.nix;
@@ -58,6 +56,5 @@ in {
 } // pkgs.lib.optionalAttrs hasZig_0_16 {
   kwm = pkgs.callPackage ./pkgs/kwm {
       inherit maintainers;
-      kwmFlake = kwm;
   };
 }
