@@ -47,8 +47,8 @@ jobs:
         signingKey: '${{ secrets.CACHIX_SIGNING_KEY }}'
         authToken: '${{ secrets.CACHIX_AUTH_TOKEN }}'
     - name: Check evaluation
-        run: |
-          nix-env -f . -qa \* --meta --xml \
+      run: |
+        nix-env -f . -qa \* --meta --xml \
           --allowed-uris "github:NixOS/nixpkgs github:srcres258/iEDA" \
           --option restrict-eval true \
           --option allow-import-from-derivation true \
