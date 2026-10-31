@@ -35,8 +35,12 @@ nix shell -f '<nixpkgs>' nix-build-uncached -c nix-build-uncached ci.nix -A cach
 - There is no separate test runner; a single package build is the test equivalent here.
 
 ## CI
-- GitHub Actions (`build.yml`) evaluates and builds against **3 nixpkgs channels**: `nixpkgs-unstable`, `nixos-unstable`, and `nixos-25.05`.
-- Packages are pushed to `cachix` cache `nur-packages-srcres258`. CI triggers NUR index update on success.
+- GitHub Actions (`build.yml`) evaluates and builds against **3 nixpkgs channels**: `nixpkgs-unstable`, `nixos-unstable`, and `nixos-25.05` (one matrix leg each).
+- Cache upload is **implicit**: `cachix/cachix-action@v16` runs in its default daemon mode, registering a Nix `post-build-hook` that pushes each *newly built* store path to cache `nur-packages-srcres258`. Its post step only flushes that daemon; there is no explicit `cachix push` step.
+- **Keep `Setup cachix` above every build step** (both iEDA builds and `nix-build-uncached ci.nix -A cacheOutputs`). The hook does not exist before the action runs, and daemon mode never scans the store afterwards, so anything built earlier is silently never cached.
+- Substituted paths are not re-pushed, so a green run that uploads zero paths can simply mean everything was already cached — not a broken setup. Expect uploads only when something is genuinely rebuilt.
+- Pushing requires `secrets.CACHIX_AUTH_TOKEN` / `CACHIX_SIGNING_KEY`; without them the action only warns and CI still passes read-only. Fork PRs receive no secrets, so they cannot write to the cache.
+- `Trigger NUR update` is gated to the `nixpkgs-unstable` leg only, otherwise all 3 matrix legs POST the same request.
 - CI runs on PR, push to main/master, daily schedule, and manual dispatch.
 
 ## Adding a package
