@@ -60,6 +60,7 @@ nix shell -f '<nixpkgs>' nix-build-uncached -c nix-build-uncached ci.nix -A cach
 | Electron binary repack | `lceda-pro`, `jlc-assistant` | `stdenv.mkDerivation`, `makeWrapper` to electron, `sourceProvenance` in meta, `copyDesktopItems` |
 | FHS env wrapper | `vivado-2022_2` | `buildFHSEnv` wrapping `stdenv.mkDerivation`, `patchelf` for ELF fixups |
 | Prebuilt JAR | `peerbanhelper` | `stdenvNoCC.mkDerivation`, `makeWrapper` to jdk |
+| Node + Python hybrid | `pi-furry-partner-hd` | `stdenvNoCC` driving upstream build scripts, `buildNpmPackage` runtimes for the test suite, `outputs = [ "out" "bundle" ]`, no `mainProgram` |
 
 ## Repo-specific conventions
 - **Hash format**: Use SRI format (`hash = "sha256-..."`). Some older packages (`adif-manage`) use bare `sha256` — prefer SRI for new packages.
@@ -69,7 +70,9 @@ nix shell -f '<nixpkgs>' nix-build-uncached -c nix-build-uncached ci.nix -A cach
 - `bibox` uses `cargoBuildFlags = [ "--ignore-rust-version" ]` to bypass Cargo's MSRV check.
 - Electron repacks need `dontConfigure = true; dontBuild = true;` with manual `installPhase`.
 - `kwm` uses `dontUseZigCheck = true`.
-- All packages must include `meta.mainProgram` (except Python libraries).
+- All packages must include `meta.mainProgram` (except Python libraries, and extension/data trees such as `pi-furry-partner-hd` which ship no executable).
+- **Never filter a fetched source with `lib.cleanSourceWith` / `builtins.path`**: those read the store while evaluating, so CI's clean store fails with `path '…-source.drv' is not valid`. Filter inside a derivation (`runCommand`) or pass the pinned tree as-is.
+- Porting an upstream flake output means vendoring its derivation logic (`pi-furry-partner-hd` mirrors `pi-hd-extension`), not calling `builtins.getFlake`; the `ieda` wiring in `default.nix` is the existing exception.
 - Indentation is 4 spaces. Match the whitespace style of the file you touch.
 
 ## Repo-specific quirks
